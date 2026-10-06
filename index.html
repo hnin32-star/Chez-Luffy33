@@ -1,194 +1,332 @@
-<!doctype html>
-<html lang="fr">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>CHEZ.LUFFY 33</title>
-<style>
-:root{color-scheme:dark;--bg:#070809;--panel:rgba(8,9,11,.9);--red:#e33228;--white:#f7f7f7;--muted:#bdbdbd;--line:#25272b;--blue:#168ff0}
-*{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:#050506;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
-button{font:inherit}
-#app{min-height:100dvh;background:#070809;color:var(--white);position:relative;overflow:hidden}
-.bg{position:fixed;inset:0;z-index:0;background:radial-gradient(circle at 50% 25%,rgba(31,79,130,.65),transparent 38%),linear-gradient(145deg,#111 0%,#06162b 48%,#090909 100%)}
-.bg:before{content:"LUFFY";position:absolute;left:-10%;top:24%;font-weight:1000;font-style:italic;font-size:39vw;line-height:.8;color:rgba(214,32,25,.18);-webkit-text-stroke:5px rgba(255,255,255,.08);transform:rotate(-5deg)}
-.bg:after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,.24),rgba(0,0,0,.68))}
-.top{position:relative;z-index:3;height:86px;background:#f6f6f7;color:#111;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #d8d8d8}
-.top .title{text-align:center;font-weight:900;font-size:22px;letter-spacing:.2px}
-.top .sub{font-size:17px;font-weight:500;color:#777;margin-top:2px}
-.top .close{position:absolute;left:30px;color:#1687ef;font-size:28px;font-weight:400}
-.top .dots{position:absolute;right:28px;border:2px solid #1687ef;color:#1687ef;border-radius:50%;width:42px;height:42px;display:grid;place-items:center;font-weight:900;letter-spacing:2px}
-.ticker{position:relative;z-index:3;height:58px;display:flex;align-items:center;overflow:hidden;background:#050505;border-top:2px solid var(--red);border-bottom:2px solid var(--red);white-space:nowrap;font-size:18px;font-weight:800;letter-spacing:1px}
-.ticker span{display:inline-block;padding-left:100%;animation:scroll 14s linear infinite}
-.ticker b{color:var(--red)}
-@keyframes scroll{to{transform:translateX(-100%)}}
-main{position:relative;z-index:2;min-height:calc(100dvh - 150px);padding:28px 30px 115px;overflow:auto}
-.page{display:none}
-.page.active{display:block}
-.hero{text-align:center;padding:10px 0 26px}
-.logo{width:min(280px,82vw);height:210px;margin:0 auto 30px;border-radius:34px;background:linear-gradient(145deg,#138eea,#072c58);border:1px solid rgba(255,255,255,.24);display:grid;place-items:center;box-shadow:0 12px 32px rgba(0,0,0,.55);font-weight:1000;font-size:52px;font-style:italic;color:#fff;text-shadow:4px 4px 0 #d51e19,-3px -2px 0 #101010}
-.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;width:100%;max-width:620px;margin:0 auto}
-.card{min-height:245px;border:1px solid rgba(255,255,255,.32);border-radius:24px;display:flex;align-items:flex-end;justify-content:center;padding:18px;background:linear-gradient(180deg,rgba(40,40,40,.15),rgba(0,0,0,.84));box-shadow:0 10px 22px rgba(0,0,0,.48);font-size:25px;font-weight:900;text-shadow:0 2px 7px #000;text-align:center}
-.card.wide{grid-column:1/-1;min-height:150px}
-.card:nth-child(1){background:linear-gradient(145deg,rgba(180,160,90,.62),rgba(0,0,0,.84))}
-.card:nth-child(2){background:linear-gradient(145deg,rgba(34,143,66,.62),rgba(0,0,0,.84))}
-.card:nth-child(3){background:linear-gradient(145deg,rgba(15,171,225,.62),rgba(0,0,0,.84))}
-.panel{max-width:690px;margin:10px auto;background:var(--panel);border:1px solid var(--red);border-radius:28px;padding:34px 26px;box-shadow:0 18px 40px rgba(0,0,0,.45)}
-.empty{text-align:center;padding:76px 20px}
-.cart-icon{font-size:70px;filter:drop-shadow(0 4px 4px #000)}
-h1{font-size:36px;margin:14px 0 8px;text-align:center}
-h2{font-size:28px;margin:0 0 22px}
-.muted{color:var(--muted);font-size:20px;text-align:center}
-.product{padding:22px;border:1px solid rgba(255,255,255,.12);border-radius:20px;background:rgba(0,0,0,.28)}
-.product .row{display:flex;justify-content:space-between;gap:16px;align-items:center}
-.price{font-size:27px;font-weight:900}
-.controls{display:flex;align-items:center;gap:14px;margin-top:22px}
-.qty{width:54px;height:54px;border:0;border-radius:17px;background:#242426;color:#fff;font-size:28px}
-.qty.plus{background:#ed0909}
-.qty.n{background:transparent;font-size:25px}
-.danger{margin-left:auto;border:2px solid #ff4141;color:#ff5555;background:transparent;border-radius:16px;padding:13px 18px;font-weight:900}
-.total{display:flex;justify-content:space-between;font-size:30px;font-weight:900;margin-top:26px}
-.total strong{color:#ef1010}
-.choice-title{text-align:center;font-family:Georgia,serif;font-style:italic;font-size:23px;margin:30px 0 18px}
-.choices{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.choice{padding:24px 10px;border:4px solid #444;border-radius:24px;background:#151515;color:#fff;font-weight:800;font-size:21px}
-.info p{font-size:19px;line-height:1.6;margin:18px 0}
-.info .red{color:var(--red);font-weight:900}
-.info h2{color:var(--red);text-align:center}
-.divider{height:1px;background:linear-gradient(90deg,transparent,var(--red),transparent);margin:30px 0}
-.links{display:flex;flex-direction:column;gap:30px;max-width:690px;margin:10px auto}
-.linkbtn{border:0;border-radius:28px;padding:30px 18px;font-size:26px;font-weight:900;color:#fff;box-shadow:0 8px 22px rgba(0,0,0,.25)}
-.pink{background:#ef9db5}
-.cyan{background:#239ed2}
-.purple{background:#7b2bc2}
-.nav{position:fixed;z-index:10;bottom:0;left:0;right:0;height:116px;background:rgba(5,5,7,.97);border-top:1px solid #292929;display:grid;grid-template-columns:repeat(4,1fr);padding-bottom:env(safe-area-inset-bottom)}
-.nav button{border:0;background:transparent;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;font-size:18px}
-.nav .ico{font-size:32px;line-height:1}
-.nav button.active{color:#fff}
-.badge{position:absolute;top:-10px;right:24%;background:#ed1010;color:#fff;border-radius:999px;font-size:11px;padding:2px 7px;font-weight:900}
-@media(min-width:760px){main{max-width:900px;margin:auto}.cards{gap:34px}.top{height:96px}}
-</style>
-</head>
-<body>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 
-<div id="app">
-<div class="bg"></div>
+<div class="home">
 
-<header class="top">
-<div class="close">Fermer</div>
-<div>
-<div class="title">CHEZ.LUFFY 33 🥇</div>
-<div class="sub">mini-application</div>
-</div>
-<div class="dots">•••</div>
-</header>
+  <img
+    src="assets/logo.jpg"
+    class="main-logo"
+    alt="CHEZ.LUFFY 33"
+  >
 
-<div class="ticker">
-<span>⚡ LIVRAISON RAPIDE • SERVICE 7J/7 • COMMANDES EN LIGNE • <b>CHEZ.LUFFY 33</b> •</span>
-</div>
+  <div class="home-grid">
 
-<main>
+    <button
+      class="menu-card"
+      onclick="openCategory('hash')"
+    >
+      <img
+        src="assets/hash.jpg"
+        alt="HASH"
+      >
+    </button>
 
-<section id="home" class="page active">
-<div class="hero">
-<div class="logo">CHEZ<br>LUFFY</div>
-</div>
+    <button
+      class="menu-card"
+      onclick="openCategory('weed')"
+    >
+      <img
+        src="assets/weed.jpg"
+        alt="WEED"
+      >
+    </button>
 
-<div class="cards">
-<div class="card">MENU</div>
-<div class="card">SNACK</div>
-<div class="card wide">NOUVEAUTÉS</div>
-</div>
-</section>
+    <button
+      class="menu-card large"
+      onclick="openCategory('cke')"
+    >
+      <img
+        src="assets/cke.jpg"
+        alt="C*KE"
+      >
+    </button>
 
-<section id="cart" class="page">
-<div class="panel empty">
-<div class="cart-icon">🛒</div>
-<h1>TON PANIER EST VIDE</h1>
-<div class="muted">Les produits sélectionnés apparaîtront ici.</div>
-</div>
-</section>
-
-<section id="info" class="page">
-<div class="panel info">
-
-<h2>Bienvenue <span class="red">CHEZ LUFFY 33</span> 🏴‍☠️</h2>
-
-<p>Retrouve ici toutes les informations utiles concernant le snack, les horaires et les modalités de commande.</p>
-
-<div class="divider"></div>
-
-<h2>⚡ DÉLAIS & CONSEILS :</h2>
-
-<p>• <b>Commande :</b> remplissez les informations demandées minutieusement pour que le traitement soit le plus fluide possible.</p>
-
-<p>• <b>Retrait / livraison :</b> choisissez le mode disponible au moment de la commande.</p>
-
-<div class="divider"></div>
-
-<h2>🔄 RETOURS & AVIS :</h2>
-
-<p>N’hésitez pas à partager votre retour après votre commande.</p>
+  </div>
 
 </div>
-</section>
 
-<section id="links" class="page">
+<div class="category-page">
 
-<div class="links">
-<button class="linkbtn cyan">🔵 CANAL D’INFORMATION 🔵</button>
-<button class="linkbtn pink">🚀 ACTUALITÉS 🚀</button>
-<button class="linkbtn cyan">🚨 CANAL SECOURS 🚨</button>
-<button class="linkbtn purple">🟣 INSTAGRAM 🟣</button>
+  <div class="category-header">
+
+    <div
+      id="categoryTitle"
+      class="category-title"
+    >
+      HASH
+    </div>
+
+    <img
+      src="assets/logo.jpg"
+      class="small-logo"
+    >
+
+  </div>
+
+  <button
+    class="back-btn"
+    onclick="showPage('home')"
+  >
+    ← RETOUR
+  </button>
+
+  <div
+    id="products"
+    class="products"
+  ></div>
+
 </div>
 
-<div class="logo" style="margin-top:35px">LUFFY</div>
+<div class="detail-page">
 
-</section>
+  <button
+    id="productBack"
+    class="back-btn"
+  >
+    ← RETOUR
+  </button>
 
-</main>
+  <div
+    id="productDetail"
+    class="detail-box"
+  ></div>
 
-<nav class="nav">
-<button data-page="home" class="active">
-<span class="ico">🏠</span>Accueil
+</div>
+
+<div class="cart-page">
+
+  <div
+    id="cartItems"
+    class="cart-box"
+  ></div>
+
+  <div class="total-box">
+
+    <span>TOTAL</span>
+
+    <span id="cartTotal">
+      0.00 €
+    </span>
+
+  </div>
+
+  <div class="checkout-box">
+
+    <div class="delivery-question">
+      Comment veux-tu récupérer ta commande ?
+    </div>
+
+    <div class="delivery-choice">
+
+      <button
+        id="meetBtn"
+        onclick="setDelivery('meet')"
+      >
+        🏠 Meet-Up
+      </button>
+
+      <button
+        id="deliveryBtn"
+        onclick="setDelivery('delivery')"
+      >
+        🚗 Livraison
+      </button>
+
+    </div>
+
+    <div
+      id="deliveryFields"
+      style="display:none"
+    >
+
+      <div class="field">
+
+        <label>
+          🏠 Adresse
+        </label>
+
+        <textarea
+          id="address"
+          placeholder="Adresse..."
+        ></textarea>
+
+      </div>
+
+      <div class="field">
+
+        <label>
+          ⏰ Heure souhaitée
+        </label>
+
+        <input
+          id="deliveryTime"
+          type="text"
+          placeholder="Ex : 18h30"
+        >
+
+      </div>
+
+      <div class="field">
+
+        <label>
+          📲 Pseudo Telegram
+        </label>
+
+        <input
+          id="telegramUser"
+          type="text"
+          placeholder="@pseudo"
+        >
+
+      </div>
+
+      <button
+        class="order-btn"
+        onclick="placeOrder()"
+      >
+        COMMANDER
+      </button>
+
+    </div>
+
+    <button
+      onclick="clearCart()"
+      style="
+        width:100%;
+        margin-top:20px;
+        padding:13px;
+        border:1px solid #444;
+        border-radius:12px;
+        background:transparent;
+        color:#aaa;
+        font-weight:900;
+      "
+    >
+      🗑 VIDER LE PANIER
+    </button>
+
+  </div>
+
+</div>
+
+<div class="info-page">
+
+  <div class="info-card">
+
+    <h2>
+      CHEZ.LUFFY 33 🥇
+    </h2>
+
+    <p>
+      Mini-application Telegram.
+    </p>
+
+  </div>
+
+  <div class="info-card">
+
+    <h2>
+      Commande
+    </h2>
+
+    <p>
+      Ajoute tes articles au panier,
+      choisis Meet-Up ou Livraison
+      puis complète les informations demandées.
+    </p>
+
+  </div>
+
+</div>
+
+<div class="links-page">
+
+  <a
+    href="#"
+    class="link-button telegram-link"
+  >
+    🔵 CANAL TELEGRAM 🔵
+  </a>
+
+  <a
+    href="#"
+    class="link-button tato-link"
+  >
+    🚀 CANAL TATO TALK 🚀
+  </a>
+
+  <a
+    href="#"
+    class="link-button backup-link"
+  >
+    🚨 CANAL SECOURS 🚨
+  </a>
+
+  <a
+    href="#"
+    class="link-button instagram-link"
+  >
+    🟣 INSTAGRAM 🟣
+  </a>
+
+  <div class="links-logo">
+    Chez-doctor
+    <br>
+    LUFFY
+  </div>
+
+</div>
+
+<button onclick="showPage('home')">
+
+  <span class="nav-icon">
+    🏠
+  </span>
+
+  <span>
+    Accueil
+  </span>
+
 </button>
 
-<button data-page="cart">
-<span class="ico">🛒</span>Panier
+<button onclick="showPage('cart')">
+
+  <span class="nav-icon">
+    🛒
+  </span>
+
+  <span>
+    Panier
+  </span>
+
+  <span
+    id="cartBadge"
+    class="cart-badge"
+  >
+    0
+  </span>
+
 </button>
 
-<button data-page="info">
-<span class="ico">ℹ️</span>Info
+<button onclick="showPage('info')">
+
+  <span class="nav-icon">
+    ℹ️
+  </span>
+
+  <span>
+    Info
+  </span>
+
 </button>
 
-<button data-page="links">
-<span class="ico">🔗</span>Liens
+<button onclick="showPage('links')">
+
+  <span class="nav-icon">
+    🔗
+  </span>
+
+  <span>
+    Liens
+  </span>
+
 </button>
-</nav>
-
-</div>
-
-<script>
-const pages=[...document.querySelectorAll('.page')];
-const nav=[...document.querySelectorAll('.nav button')];
-
-nav.forEach(b=>b.addEventListener('click',()=>{
-const id=b.dataset.page;
-
-pages.forEach(p=>{
-p.classList.toggle('active',p.id===id);
-});
-
-nav.forEach(n=>{
-n.classList.toggle('active',n===b);
-});
-
-window.scrollTo({
-top:0,
-behavior:'smooth'
-});
-}));
-</script>
-
-</body>
-</html>
